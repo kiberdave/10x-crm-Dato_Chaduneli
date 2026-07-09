@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up — 10X CRM</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="logo-row">
+        <div class="logo-mark">10X</div>
+        <strong>10X CRM</strong>
+      </div>
+      <h1>Create your account</h1>
+      <p>Start tracking your pipeline in a minute.</p>
+
+      <form id="signup-form" novalidate>
+        <div class="field">
+          <label for="signup-fullname">Full name</label>
+          <input type="text" id="signup-fullname" name="fullName" placeholder="Nino Beridze" />
+          <div class="field-error" data-error-for="fullName"></div>
+        </div>
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input type="text" id="signup-email" name="email" placeholder="name@company.com" />
+          <div class="field-error" data-error-for="email"></div>
+        </div>
+        <div class="field">
+          <label for="signup-company">Company (optional)</label>
+          <input type="text" id="signup-company" name="company" placeholder="Company (optional)" />
+          <div class="field-error" data-error-for="company"></div>
+        </div>
+        <div class="field">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" name="password" placeholder="At least 8 characters" />
+          <div class="field-error" data-error-for="password"></div>
+        </div>
+        <div class="field">
+          <label for="signup-confirm">Confirm password</label>
+          <input type="password" id="signup-confirm" name="confirmPassword" placeholder="Repeat password" />
+          <div class="field-error" data-error-for="confirmPassword"></div>
+        </div>
+        <button type="submit" class="btn-primary btn-block">Create account</button>
+      </form>
+
+      <p class="auth-footer">Already have an account? <a href="index.html">Log in</a></p>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/guard.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
