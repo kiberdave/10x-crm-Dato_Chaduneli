@@ -118,6 +118,7 @@ async function initClientsPage() {
 
   clientsState = clients;
   renderClients();
+  wireToolbar();
 }
 
 /* ---------------- toolbar: search / filter chips / sort ---------------- */
