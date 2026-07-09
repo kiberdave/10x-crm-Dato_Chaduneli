@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — 10X CRM</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar">
+      <a href="dashboard.html" class="logo">
+        <div class="logo-mark">10X</div>
+        10X CRM
+      </a>
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="clients.html" class="nav-link">Clients</a>
+      <a href="profile.html" class="nav-link">Profile</a>
+
+      <div class="sidebar-bottom">
+        <div class="nav-link theme-toggle">
+          <span>Dark mode</span>
+          <button id="theme-toggle" class="switch" aria-label="Toggle dark mode"></button>
+        </div>
+        <button id="logout-btn" class="nav-link" style="border:none;background:transparent;justify-content:flex-start;width:100%;">
+          Logout
+        </button>
+      </div>
+    </nav>
+
+    <main class="main">
+      <div class="page-header">
+        <div>
+          <h1 id="greeting">Welcome back!</h1>
+          <p id="clock" class="mt-0"></p>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <p class="stat-label">Total clients</p>
+          <p class="stat-value" id="stat-total">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Active deals</p>
+          <p class="stat-value" id="stat-active">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Won revenue</p>
+          <p class="stat-value" id="stat-revenue">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">New this week</p>
+          <p class="stat-value" id="stat-new">—</p>
+        </div>
+      </div>
+
+      <h3>Pipeline overview</h3>
+      <div class="pipeline-grid">
+        <div class="pipeline-card">
+          <p class="p-label">Lead</p>
+          <p class="p-value" id="pipe-lead">0</p>
+        </div>
+        <div class="pipeline-card">
+          <p class="p-label">Contacted</p>
+          <p class="p-value" id="pipe-contacted">0</p>
+        </div>
+        <div class="pipeline-card p-won">
+          <p class="p-label">Won</p>
+          <p class="p-value" id="pipe-won">0</p>
+        </div>
+        <div class="pipeline-card p-lost">
+          <p class="p-label">Lost</p>
+          <p class="p-value" id="pipe-lost">0</p>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <h3 style="margin:0;">Recent clients</h3>
+        <a href="clients.html">View all clients &rarr;</a>
+      </div>
+      <div id="recent-list" class="recent-list"></div>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/guard.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
