@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in — 10X CRM</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="logo-row">
+        <div class="logo-mark">10X</div>
+        <strong>10X CRM</strong>
+      </div>
+      <h1>Welcome back</h1>
+      <p>Log in to see today's pipeline.</p>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input type="text" id="login-email" name="email" placeholder="name@company.com" />
+          <div class="field-error" data-error-for="email"></div>
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" name="password" placeholder="Your password" />
+          <div class="field-error" data-error-for="password"></div>
+        </div>
+        <button type="submit" class="btn-primary btn-block">Log in</button>
+      </form>
+
+      <p class="auth-footer">Don't have an account? <a href="signup.html">Sign up</a></p>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/guard.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
