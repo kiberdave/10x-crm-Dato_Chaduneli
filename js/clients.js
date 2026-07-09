@@ -121,6 +121,7 @@ async function initClientsPage() {
   wireToolbar();
   wireListDelegation();
   wireAddModal();
+  wireDetailModal();
 }
 
 /* ---------------- toolbar: search / filter chips / sort ---------------- */
