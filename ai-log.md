@@ -1,9 +1,7 @@
 # AI usage log
 
 This file documents how AI tools were used while building 10X CRM, as
-required by the "AI usage" module. Replace the example entries below with
-your own real prompts and outcomes — keep at least 5 entries across
-different stages of the project.
+required by the "AI usage" module.
 
 ---
 
