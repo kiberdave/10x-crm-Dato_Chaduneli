@@ -61,3 +61,13 @@ glossary, research-note.
 объяснить любую часть на устном экзамене и быть готовым к живому
 изменению кода без AI. Также нужно задеплоить на Vercel/Netlify и
 вписать live-ссылку в README.
+
+## 2026-07-10 14:58 — вместе с Claude Code
+
+Задеплоили проект на Vercel: https://10x-crm-dato-chaduneli.vercel.app/
+(import репозитория `10x-crm-Dato_Chaduneli` через GitHub, без build
+command — статика). Проверили, что страница логина открывается
+корректно (заголовок "Welcome back", форма Email/Password, ссылка на
+Sign up). Вписали ссылку в README.md в секцию `## Live demo`.
+
+Следующий шаг: постраничный разбор кода.

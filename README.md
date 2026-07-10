@@ -41,7 +41,7 @@ No build step, no dependencies to install.
 
 ## Live demo
 
-`<add your Vercel/Netlify URL here>`
+https://10x-crm-dato-chaduneli.vercel.app/
 
 ## Test account
 
