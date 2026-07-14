@@ -356,12 +356,63 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .gap-8 { gap: 8px; }
 .hidden { display: none !important; }
 
-@media (max-width: 720px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; }
-  .sidebar-bottom { margin-top: 0; flex-direction: row; border-top: none; padding-top: 0; }
-  .sidebar .logo { padding: 6px 10px; }
-  .main { padding: 20px; }
+/* ==========================================================================
+   Responsive breakpoints
+   Desktop is the default above (no media query needed) — full sidebar,
+   4-column stat/pipeline grids. Tablet and mobile below only override
+   what actually needs to change at that size, cascading on top of
+   desktop and (for mobile) on top of tablet.
+   ========================================================================== */
+
+/* ---------- tablet (≤1024px, e.g. iPad portrait/landscape) ---------- */
+@media (max-width: 1024px) {
+  .app-shell { grid-template-columns: 180px 1fr; }
+  .main { padding: 22px; }
   .stat-grid, .pipeline-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .client-card select.status-select { width: 110px; }
+}
+
+/* ---------- mobile (≤640px, e.g. phones in portrait) ---------- */
+@media (max-width: 640px) {
+  /* sidebar becomes a horizontal, scrollable top bar instead of a
+     220px-wide side column — there isn't room for both a sidebar and
+     content on a phone screen */
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar {
+    position: sticky; top: 0; z-index: 10;
+    height: auto; flex-direction: row; align-items: center;
+    overflow-x: auto; padding: 10px 12px; gap: 10px;
+  }
+  .sidebar .logo { padding: 4px 6px; }
+  .sidebar-bottom {
+    margin-top: 0; margin-left: auto; flex-shrink: 0;
+    flex-direction: row; border-top: none; padding-top: 0;
+  }
+  /* keep only the switch, drop the "Dark mode" label — no room for it
+     in a horizontally-scrolling top bar */
+  .sidebar .theme-toggle span { display: none; }
+  .main { padding: 16px; }
+
+  .auth-card { padding: 24px 20px; }
+
+  /* search / filter chips / sort stack instead of squeezing onto one row */
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar input[type="text"] { width: 100%; }
+  .toolbar select.sort-select { width: 100%; margin-left: 0; }
+
+  /* a client-card's status-select + Edit + Delete no longer fit next to
+     the name/company text on a narrow screen, so they wrap onto their
+     own full-width row below it (flex-basis: 100% forces the wrap) */
+  .client-card { flex-wrap: wrap; }
+  .client-card .row-actions { flex-basis: 100%; flex-wrap: wrap; margin-top: 10px; }
+
+  .modal { padding: 18px; }
+  .modal-overlay { padding: 12px; }
   .modal-row-2 { grid-template-columns: 1fr; }
+
+  /* least important column — drop it rather than truncate the name */
+  .recent-row .date { display: none; }
+
+  .toast-container { left: 12px; right: 12px; bottom: 12px; }
+  .toast { min-width: 0; max-width: none; width: 100%; }
 }
