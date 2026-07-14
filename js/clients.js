@@ -7,6 +7,9 @@ let clientsState = [];
 let activeStatusFilter = "All";
 let activeSort = "newest";
 let activeDetailClientId = null;
+/* null = Add Client modal is in "create" mode; a client id = "edit" mode
+   (bonus: Edit reuses the same modal/form, submits PUT instead of POST). */
+let editingClientId = null;
 
 /* ---------------- rendering ---------------- */
 
@@ -113,12 +116,17 @@ function createClientCard(c) {
     statusSelect.appendChild(option);
   });
 
+  const editBtn = document.createElement("button");
+  editBtn.className = "btn-sm edit-btn";
+  editBtn.dataset.id = c.id;
+  editBtn.textContent = "Edit";
+
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "btn-danger btn-sm delete-btn";
   deleteBtn.dataset.id = c.id;
   deleteBtn.textContent = "Delete";
 
-  actions.append(statusSelect, deleteBtn);
+  actions.append(statusSelect, editBtn, deleteBtn);
   card.append(avatar, info, actions);
   return card;
 }
@@ -220,6 +228,10 @@ function wireListDelegation() {
       handleDeleteClient(Number(e.target.dataset.id));
       return;
     }
+    if (e.target.classList.contains("edit-btn")) {
+      openEditModal(Number(e.target.dataset.id));
+      return;
+    }
     if (e.target.classList.contains("status-select")) return;
     const card = e.target.closest(".client-card");
     if (card) openDetailModal(Number(card.dataset.id));
@@ -250,14 +262,22 @@ function wireAddModal() {
   const overlay = document.getElementById("add-modal");
   const closeBtn = document.getElementById("add-modal-close");
   const form = document.getElementById("add-client-form");
+  const title = document.getElementById("add-modal-title");
+  const submitBtn = document.getElementById("add-submit-btn");
   if (!openBtn || !overlay || !form) return;
 
   const open = () => {
+    editingClientId = null;
     form.reset();
     clearFieldErrors(form);
+    title.textContent = "Add client";
+    submitBtn.textContent = "Add client";
     overlay.classList.remove("hidden");
   };
-  const close = () => overlay.classList.add("hidden");
+  const close = () => {
+    overlay.classList.add("hidden");
+    editingClientId = null;
+  };
 
   openBtn.addEventListener("click", open);
   closeBtn.addEventListener("click", close);
@@ -286,7 +306,11 @@ function wireAddModal() {
     if (!isValidEmail(email)) {
       setFieldError(form, "email", "Please enter a valid email address");
       hasError = true;
-    } else if (clientsState.some((c) => c.email.toLowerCase() === email.toLowerCase())) {
+    } else if (
+      clientsState.some(
+        (c) => c.email.toLowerCase() === email.toLowerCase() && c.id !== editingClientId
+      )
+    ) {
       setFieldError(form, "email", "A client with this email already exists");
       hasError = true;
     }
@@ -301,8 +325,34 @@ function wireAddModal() {
 
     if (hasError) return;
 
-    const submitBtn = form.querySelector("button[type=submit]");
     submitBtn.disabled = true;
+
+    if (editingClientId !== null) {
+      try {
+        await fetch(`https://dummyjson.com/users/${editingClientId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName: name.split(" ")[0],
+            lastName: name.split(" ").slice(1).join(" ") || "",
+          }),
+        });
+      } catch (err) {
+        /* Same as delete: DummyJSON may 404 for client-generated ids since
+           it never actually stored them — update locally regardless. */
+      }
+
+      const client = clientsState.find((c) => c.id === editingClientId);
+      if (client) {
+        Object.assign(client, { name, email, phone, company, dealValue, status });
+      }
+      saveClients(clientsState);
+      renderClients();
+      submitBtn.disabled = false;
+      close();
+      showToast("Client updated ✓", "success");
+      return;
+    }
 
     let apiClient = null;
     try {
@@ -336,6 +386,30 @@ function wireAddModal() {
     close();
     showToast("Client added ✓", "success");
   });
+}
+
+/** Opens the same Add Client modal pre-filled for editing (bonus: PUT). */
+function openEditModal(id) {
+  const client = clientsState.find((c) => c.id === id);
+  if (!client) return;
+
+  const form = document.getElementById("add-client-form");
+  const overlay = document.getElementById("add-modal");
+  const title = document.getElementById("add-modal-title");
+  const submitBtn = document.getElementById("add-submit-btn");
+
+  editingClientId = id;
+  clearFieldErrors(form);
+  form.clientName.value = client.name;
+  form.email.value = client.email;
+  form.phone.value = client.phone || "";
+  form.company.value = client.company || "";
+  form.dealValue.value = client.dealValue;
+  form.status.value = client.status;
+
+  title.textContent = "Edit client";
+  submitBtn.textContent = "Save changes";
+  overlay.classList.remove("hidden");
 }
 
 /* ---------------- client detail modal: notes + reminder ---------------- */
