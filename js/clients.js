@@ -50,6 +50,79 @@ function getVisibleClients() {
   return visible;
 }
 
+/**
+ * DOM-building version of the empty state: no HTML string is parsed,
+ * so there is nothing to escape.
+ */
+function createEmptyState(message) {
+  const div = document.createElement("div");
+  div.className = "empty-state";
+  div.textContent = message;
+  return div;
+}
+
+/**
+ * Builds one client card as real DOM nodes instead of an HTML string.
+ * textContent/src/dataset never get parsed as markup, so this is safe
+ * by construction — no escapeHtml() calls needed anywhere in here.
+ */
+function createClientCard(c) {
+  const card = document.createElement("div");
+  card.className = "client-card";
+  card.dataset.id = c.id;
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  if (c.image) {
+    const img = document.createElement("img");
+    img.src = c.image;
+    img.alt = "";
+    avatar.appendChild(img);
+  } else {
+    avatar.textContent = initials(c.name);
+  }
+
+  const info = document.createElement("div");
+  info.className = "info";
+
+  const nameEl = document.createElement("p");
+  nameEl.className = "cname";
+  nameEl.textContent = c.name;
+
+  const metaEl = document.createElement("p");
+  metaEl.className = "cmeta";
+  metaEl.textContent = `${c.company || "—"} · ${c.email}`;
+
+  const valueEl = document.createElement("p");
+  valueEl.className = "cvalue";
+  valueEl.textContent = formatCurrency(c.dealValue);
+
+  info.append(nameEl, metaEl, valueEl);
+
+  const actions = document.createElement("div");
+  actions.className = "row-actions";
+
+  const statusSelect = document.createElement("select");
+  statusSelect.className = `status-select status-select-${c.status.toLowerCase()}`;
+  statusSelect.dataset.id = c.id;
+  ["Lead", "Contacted", "Won", "Lost"].forEach((s) => {
+    const option = document.createElement("option");
+    option.value = s;
+    option.textContent = s;
+    option.selected = s === c.status;
+    statusSelect.appendChild(option);
+  });
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "btn-danger btn-sm delete-btn";
+  deleteBtn.dataset.id = c.id;
+  deleteBtn.textContent = "Delete";
+
+  actions.append(statusSelect, deleteBtn);
+  card.append(avatar, info, actions);
+  return card;
+}
+
 function renderClients() {
   const container = document.getElementById("client-list");
   if (!container) return;
@@ -57,36 +130,12 @@ function renderClients() {
   const visible = getVisibleClients();
 
   if (visible.length === 0) {
-    container.innerHTML = `<div class="empty-state">No clients found.</div>`;
+    container.replaceChildren(createEmptyState("No clients found."));
+    updateStatsIfPresent();
     return;
   }
 
-  container.innerHTML = visible
-    .map(
-      (c) => `
-    <div class="client-card" data-id="${c.id}">
-      <div class="avatar">${
-        c.image ? `<img src="${escapeHtml(c.image)}" alt="">` : escapeHtml(initials(c.name))
-      }</div>
-      <div class="info">
-        <p class="cname">${escapeHtml(c.name)}</p>
-        <p class="cmeta">${escapeHtml(c.company || "—")} · ${escapeHtml(c.email)}</p>
-        <p class="cvalue">${formatCurrency(c.dealValue)}</p>
-      </div>
-      <div class="row-actions">
-        <select class="status-select status-select-${c.status.toLowerCase()}" data-id="${c.id}">
-          ${["Lead", "Contacted", "Won", "Lost"]
-            .map(
-              (s) => `<option value="${s}" ${s === c.status ? "selected" : ""}>${s}</option>`
-            )
-            .join("")}
-        </select>
-        <button class="btn-danger btn-sm delete-btn" data-id="${c.id}">Delete</button>
-      </div>
-    </div>`
-    )
-    .join("");
-
+  container.replaceChildren(...visible.map(createClientCard));
   updateStatsIfPresent();
 }
 
