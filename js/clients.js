@@ -186,7 +186,7 @@ async function initClientsPage() {
 function wireToolbar() {
   const searchInput = document.getElementById("search-input");
   if (searchInput) {
-    searchInput.addEventListener("input", renderClients);
+    searchInput.addEventListener("input", debounce(renderClients, 300));
   }
 
   document.querySelectorAll(".chip").forEach((chip) => {

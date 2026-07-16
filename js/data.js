@@ -155,6 +155,23 @@ function showToast(message, type) {
   setTimeout(remove, 3000);
 }
 
+/* ---------------- debounce ---------------- */
+
+/**
+ * Wraps fn so rapid, repeated calls collapse into one — only the last
+ * call within `delay` ms actually runs. Used on the clients search
+ * input: without this, renderClients() would re-filter/re-render the
+ * whole list on every single keystroke; with it, that only happens
+ * once typing actually pauses.
+ */
+function debounce(fn, delay) {
+  let timeoutId;
+  return () => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(fn, delay);
+  };
+}
+
 /* ---------------- formatting helpers ---------------- */
 
 function formatCurrency(value) {
