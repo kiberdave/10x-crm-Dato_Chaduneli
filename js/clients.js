@@ -10,6 +10,12 @@ let activeDetailClientId = null;
 /* null = Add Client modal is in "create" mode; a client id = "edit" mode
    (bonus: Edit reuses the same modal/form, submits PUT instead of POST). */
 let editingClientId = null;
+/* client id -> setTimeout id for a pending "Remind me in 1 min".
+   Without this, clicking Remind twice for the same client stacks up
+   two independent timers (two toasts fire), and deleting a client
+   with a pending reminder still shows a follow-up toast for someone
+   who's no longer in the list. */
+let reminderTimers = {};
 
 /* ---------------- rendering ---------------- */
 
@@ -242,6 +248,11 @@ async function handleDeleteClient(id) {
   const confirmed = confirm("Delete this client? This cannot be undone.");
   if (!confirmed) return;
 
+  if (reminderTimers[id]) {
+    clearTimeout(reminderTimers[id]);
+    delete reminderTimers[id];
+  }
+
   try {
     await fetch(`https://dummyjson.com/users/${id}`, { method: "DELETE" });
   } catch (e) {
@@ -444,9 +455,15 @@ function wireDetailModal() {
   remindBtn.addEventListener("click", () => {
     const client = clientsState.find((c) => c.id === activeDetailClientId);
     if (!client) return;
+
+    if (reminderTimers[client.id]) {
+      clearTimeout(reminderTimers[client.id]);
+    }
+
     showToast("Reminder set ✓", "success");
-    setTimeout(() => {
+    reminderTimers[client.id] = setTimeout(() => {
       showToast(`⏰ Follow up: ${client.name}`, "success");
+      delete reminderTimers[client.id];
     }, 60000);
   });
 }
