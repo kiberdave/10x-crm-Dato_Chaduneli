@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profile — 10X CRM</title>
+  <!-- Runs before CSS/body render, so data-theme is already set on the
+       first frame — otherwise the page briefly paints the default
+       (light) theme before data.js/guard.js get a chance to run.
+       Self-contained on purpose: data.js hasn't loaded yet here, so
+       the "crm_theme" key is written out directly instead of using
+       data.js's STORAGE_KEYS.THEME. -->
+  <script>
+    document.documentElement.setAttribute("data-theme", localStorage.getItem("crm_theme") || "light");
+  </script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>

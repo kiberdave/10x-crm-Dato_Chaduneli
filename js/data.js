@@ -122,10 +122,6 @@ function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
 }
 
-function initTheme() {
-  applyTheme(getTheme());
-}
-
 function toggleTheme() {
   const next = getTheme() === "dark" ? "light" : "dark";
   saveTheme(next);

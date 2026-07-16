@@ -65,7 +65,6 @@ function wireThemeToggle() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  initTheme();
   if (!guardPassed) return;
   highlightActiveNav();
   wireLogout();
