@@ -86,6 +86,9 @@ function createClientCard(c) {
     const img = document.createElement("img");
     img.src = c.image;
     img.alt = "";
+    /* the list can hold 30-50+ clients — lazy-load so the browser only
+       fetches avatars actually scrolled into view, not all at once */
+    img.loading = "lazy";
     avatar.appendChild(img);
   } else {
     avatar.textContent = initials(c.name);
