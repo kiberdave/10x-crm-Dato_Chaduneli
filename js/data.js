@@ -145,12 +145,20 @@ function showToast(message, type) {
   const container = ensureToastContainer();
   const toast = document.createElement("div");
   toast.className = `toast toast-${type === "error" ? "error" : "success"}`;
-  toast.innerHTML = `<span>${escapeHtml(message)}</span><button aria-label="Dismiss">&times;</button>`;
+
+  const text = document.createElement("span");
+  text.textContent = message;
+
+  const closeBtn = document.createElement("button");
+  closeBtn.setAttribute("aria-label", "Dismiss");
+  closeBtn.textContent = "×";
+
+  toast.append(text, closeBtn);
 
   const remove = () => {
     if (toast.parentNode) toast.parentNode.removeChild(toast);
   };
-  toast.querySelector("button").addEventListener("click", remove);
+  closeBtn.addEventListener("click", remove);
   container.appendChild(toast);
   setTimeout(remove, 3000);
 }
