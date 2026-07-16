@@ -310,6 +310,7 @@ function wireAddModal() {
     const dealValueRaw = form.dealValue.value.trim();
     const dealValue = Number(dealValueRaw);
     const status = form.status.value;
+    const avatarUrl = form.avatarUrl.value.trim();
 
     let hasError = false;
 
@@ -336,6 +337,14 @@ function wireAddModal() {
       setFieldError(form, "dealValue", "Deal value must be a positive number");
       hasError = true;
     }
+    if (avatarUrl) {
+      try {
+        new URL(avatarUrl);
+      } catch (e) {
+        setFieldError(form, "avatarUrl", "Avatar URL doesn't look valid");
+        hasError = true;
+      }
+    }
 
     if (hasError) return;
 
@@ -358,7 +367,7 @@ function wireAddModal() {
 
       const client = clientsState.find((c) => c.id === editingClientId);
       if (client) {
-        Object.assign(client, { name, email, phone, company, dealValue, status });
+        Object.assign(client, { name, email, phone, company, image: avatarUrl, dealValue, status });
       }
       saveClients(clientsState);
       renderClients();
@@ -386,7 +395,7 @@ function wireAddModal() {
       email,
       phone,
       company,
-      image: "",
+      image: avatarUrl,
       status,
       dealValue,
       notes: [],
@@ -418,6 +427,7 @@ function openEditModal(id) {
   form.email.value = client.email;
   form.phone.value = client.phone || "";
   form.company.value = client.company || "";
+  form.avatarUrl.value = client.image || "";
   form.dealValue.value = client.dealValue;
   form.status.value = client.status;
 
