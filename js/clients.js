@@ -389,8 +389,13 @@ function wireAddModal() {
       /* Network failure: still add locally so the flow keeps working offline. */
     }
 
+    /* DummyJSON doesn't persist writes, so /users/add answers every
+       request with the same id (209). Reusing it verbatim would give two
+       added clients identical ids — then delete-by-id removes both and
+       Edit opens the wrong one. Only trust the server id if it's free. */
+    const apiId = apiClient && apiClient.id;
     const newClient = {
-      id: (apiClient && apiClient.id) || Date.now(),
+      id: apiId && !clientsState.some((c) => c.id === apiId) ? apiId : Date.now(),
       name,
       email,
       phone,
