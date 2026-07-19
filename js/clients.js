@@ -19,17 +19,6 @@ let reminderTimers = {};
 
 /* ---------------- rendering ---------------- */
 
-function badgeClassFor(status) {
-  return (
-    {
-      Lead: "badge badge-lead",
-      Contacted: "badge badge-contacted",
-      Won: "badge badge-won",
-      Lost: "badge badge-lost",
-    }[status] || "badge"
-  );
-}
-
 function getVisibleClients() {
   const searchInput = document.getElementById("search-input");
   const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
@@ -138,18 +127,10 @@ function renderClients() {
 
   if (visible.length === 0) {
     container.replaceChildren(createEmptyState("No clients found."));
-    updateStatsIfPresent();
     return;
   }
 
   container.replaceChildren(...visible.map(createClientCard));
-  updateStatsIfPresent();
-}
-
-/* keep the (optional) dashboard-style summary in sync if present on this page */
-function updateStatsIfPresent() {
-  const totalEl = document.getElementById("clients-count");
-  if (totalEl) totalEl.textContent = clientsState.length;
 }
 
 /* ---------------- initial load ---------------- */
