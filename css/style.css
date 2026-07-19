@@ -383,6 +383,36 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 [data-theme="dark"] .switch { background: var(--accent); }
 [data-theme="dark"] .switch::after { transform: translateX(16px); }
 
+/* ---------- custom scrollbar ----------
+   Applied to every scrollable area (.main, .sidebar, modals, notes
+   list) so it's a thin, rounded bar that matches the theme instead
+   of the browser's default chunky one. scrollbar-width/-color is the
+   standard property (Firefox, and Chrome/Edge on newer versions); the
+   ::-webkit-scrollbar rules are the older but still necessary way to
+   reach the same result on WebKit/Blink browsers that don't support
+   it yet — both are included so every browser gets a styled bar. */
+.main, .sidebar, .modal, .notes-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.main::-webkit-scrollbar, .sidebar::-webkit-scrollbar,
+.modal::-webkit-scrollbar, .notes-list::-webkit-scrollbar {
+  width: 8px;
+}
+.main::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-track,
+.modal::-webkit-scrollbar-track, .notes-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.main::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb,
+.modal::-webkit-scrollbar-thumb, .notes-list::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 20px;
+}
+.main::-webkit-scrollbar-thumb:hover, .sidebar::-webkit-scrollbar-thumb:hover,
+.modal::-webkit-scrollbar-thumb:hover, .notes-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
 /* ---------- utility ---------- */
 
 .text-muted { color: var(--text-muted); }
