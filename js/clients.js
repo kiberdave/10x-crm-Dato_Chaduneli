@@ -82,17 +82,7 @@ function createClientCard(c) {
 
   const avatar = document.createElement("div");
   avatar.className = "avatar";
-  if (c.image) {
-    const img = document.createElement("img");
-    img.src = c.image;
-    img.alt = "";
-    /* the list can hold 30-50+ clients — lazy-load so the browser only
-       fetches avatars actually scrolled into view, not all at once */
-    img.loading = "lazy";
-    avatar.appendChild(img);
-  } else {
-    avatar.textContent = initials(c.name);
-  }
+  fillAvatar(avatar, c);
 
   const info = document.createElement("div");
   info.className = "info";
@@ -506,9 +496,7 @@ function openDetailModal(id) {
   if (!client) return;
   activeDetailClientId = id;
 
-  document.getElementById("detail-avatar").innerHTML = client.image
-    ? `<img src="${escapeHtml(client.image)}" alt="">`
-    : escapeHtml(initials(client.name));
+  fillAvatar(document.getElementById("detail-avatar"), client);
   document.getElementById("detail-name").textContent = client.name;
   document.getElementById("detail-meta").textContent = `${client.status} · ${formatCurrency(
     client.dealValue

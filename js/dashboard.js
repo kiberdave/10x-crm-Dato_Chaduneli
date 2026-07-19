@@ -66,6 +66,40 @@ function badgeClass(status) {
   );
 }
 
+/**
+ * Builds one recent-clients row as real DOM nodes, same approach as
+ * createClientCard in clients.js — textContent/src never get parsed as
+ * markup, so nothing needs escaping.
+ */
+function createRecentRow(c) {
+  const row = document.createElement("div");
+  row.className = "recent-row";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  fillAvatar(avatar, c);
+
+  const info = document.createElement("div");
+  const nameEl = document.createElement("p");
+  nameEl.className = "name";
+  nameEl.textContent = c.name;
+  const companyEl = document.createElement("p");
+  companyEl.className = "company";
+  companyEl.textContent = c.company || "—";
+  info.append(nameEl, companyEl);
+
+  const badge = document.createElement("span");
+  badge.className = badgeClass(c.status);
+  badge.textContent = c.status;
+
+  const dateEl = document.createElement("span");
+  dateEl.className = "date";
+  dateEl.textContent = formatDate(c.createdAt);
+
+  row.append(avatar, info, badge, dateEl);
+  return row;
+}
+
 function renderRecentClients(clients) {
   const container = document.getElementById("recent-list");
   if (!container) return;
@@ -79,24 +113,7 @@ function renderRecentClients(clients) {
     return;
   }
 
-  container.innerHTML = recent
-    .map(
-      (c) => `
-    <div class="recent-row">
-      <div class="avatar">${
-        c.image
-          ? `<img src="${escapeHtml(c.image)}" alt="">`
-          : escapeHtml(initials(c.name))
-      }</div>
-      <div>
-        <p class="name">${escapeHtml(c.name)}</p>
-        <p class="company">${escapeHtml(c.company || "—")}</p>
-      </div>
-      <span class="${badgeClass(c.status)}">${c.status}</span>
-      <span class="date">${formatDate(c.createdAt)}</span>
-    </div>`
-    )
-    .join("");
+  container.replaceChildren(...recent.map(createRecentRow));
 }
 
 async function initDashboard() {

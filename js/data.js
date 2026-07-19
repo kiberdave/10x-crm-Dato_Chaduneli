@@ -210,6 +210,29 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+/**
+ * Fills an .avatar element with the client's photo or their initials.
+ * Built with DOM nodes (not an HTML string) on purpose: img.src treats
+ * the URL as plain data, so a quote inside it can never break out of
+ * the attribute — escapeHtml() escapes <>& but not quotes, which makes
+ * it unsafe for attribute values. Shared by the clients list, the
+ * detail modal and the dashboard's recent list.
+ */
+function fillAvatar(el, client) {
+  el.replaceChildren();
+  if (client.image) {
+    const img = document.createElement("img");
+    img.src = client.image;
+    img.alt = "";
+    /* lists can hold 30-50+ clients — lazy-load so the browser only
+       fetches avatars actually scrolled into view, not all at once */
+    img.loading = "lazy";
+    el.appendChild(img);
+  } else {
+    el.textContent = initials(client.name);
+  }
+}
+
 /* ---------------- validation helpers ---------------- */
 
 function isValidEmail(email) {
