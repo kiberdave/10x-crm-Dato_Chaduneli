@@ -3,5 +3,6 @@ node_modules/
 *.log
 bonus-checklist.md
 exam-questions.md
+recommendations.md
 .claude/
 Scheduled/
