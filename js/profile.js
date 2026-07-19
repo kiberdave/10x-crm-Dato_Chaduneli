@@ -110,7 +110,7 @@ function initResetDataButton() {
     );
     if (!confirmed) return;
 
-    localStorage.removeItem("crm_clients");
+    localStorage.removeItem(STORAGE_KEYS.CLIENTS);
     const { error } = await loadClients();
     if (error) {
       showToast("Could not load clients. Check your connection and try again.", "error");
