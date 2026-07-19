@@ -3,3 +3,4 @@ node_modules/
 *.log
 bonus-checklist.md
 exam-questions.md
+.claude/
