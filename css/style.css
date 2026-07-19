@@ -245,6 +245,11 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 /* ---------- cards / stats ---------- */
 
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+/* space between stacked cards (profile.html) without needing a class
+   or inline style on every one, and without an unwanted gap after
+   the last card — "+" only matches a .card directly preceded by
+   another .card, so the first one in a stack is naturally skipped */
+.card + .card { margin-top: 20px; }
 
 .stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 22px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
