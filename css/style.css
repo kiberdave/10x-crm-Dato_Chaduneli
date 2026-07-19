@@ -192,6 +192,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .nav-link:hover { background: var(--surface-alt); text-decoration: none; }
 .nav-link.active { background: var(--accent-bg); color: var(--accent); }
 
+/* Logout is a real <button>, not an <a> like the other nav-links, so
+   without this it would keep the browser's default button border and
+   background — this strips that so it blends in as a nav-link. Was
+   previously an identical inline style repeated across 3 HTML files. */
+.logout-btn { border: none; background: transparent; justify-content: flex-start; width: 100%; }
+
 /* Groups Dashboard/Clients/Profile so the mobile breakpoint can turn
    this one wrapper into its own row, instead of every link having to
    individually know it's part of "row 2". Column + the same 2px gap
