@@ -135,7 +135,6 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-block { width: 100%; }
 .btn-sm { height: 30px; padding: 0 10px; font-size: 13px; }
-.btn-icon { width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 
 /* ---------- layout shell (protected pages) ---------- */
 
@@ -226,6 +225,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 22px; gap: 16px; flex-wrap: wrap;
 }
+.page-header h3 { margin: 0; } /* section headers ("Recent clients") sit flush */
 
 /* ---------- auth pages ---------- */
 
@@ -300,10 +300,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
 .toolbar input[type="text"] { width: 240px; }
 .chip-group { display: flex; gap: 6px; flex-wrap: wrap; }
+/* Chips are real <button>s (keyboard-focusable, Enter/Space work), so
+   height/font-weight undo the base button styles that don't fit a chip. */
 .chip {
   font-size: 12px; padding: 7px 14px; border-radius: 20px;
   border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-secondary);
-  cursor: pointer;
+  cursor: pointer; height: auto; font-weight: 400;
 }
 .chip:hover { background: var(--surface-alt); }
 .chip.active { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
@@ -321,7 +323,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 /* #detail-name/#profile-name had no explicit font-size before (just
    inherited the body's 15px) — set explicitly here so "+2px" has a
    real base to add to, and so it can be targeted below. */
-#detail-name, #profile-name { font-size: 17px; }
+#detail-name, #profile-name { font-size: 17px; font-weight: 500; margin: 0; }
 /* client/user names in pure white, but only in dark mode — in light
    mode the cards are white too, so literal white text would be
    invisible; the theme-aware --text-primary (used everywhere else)
@@ -355,6 +357,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   border: 1px dashed var(--border-strong); border-radius: var(--radius);
 }
 .error-state { color: var(--danger); }
+.error-state p { margin: 0; }
 .error-state button { margin-top: 12px; }
 
 /* ---------- modal ---------- */
@@ -376,7 +379,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .detail-header .avatar { width: 44px; height: 44px; font-size: 15px; }
+.detail-header .avatar-lg { width: 48px; height: 48px; font-size: 16px; } /* profile page */
 .detail-meta { font-size: 13px; color: var(--text-secondary); }
+/* "label left, value right" table used by the detail modal and the
+   profile card. td + td = only a second cell in a row goes right, so a
+   single full-width cell (e.g. "Member since …") stays left-aligned. */
+.kv-table { width: 100%; font-size: 13px; }
+.kv-table td { padding: 4px 0; }
+.kv-table td + td { text-align: right; }
+.modal .kv-table, .modal .row-actions { margin-bottom: 14px; }
 .notes-list { max-height: 160px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; margin-bottom: 10px; background: var(--surface-alt); }
 .note-item { font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .note-item:last-child { border-bottom: none; }
@@ -458,9 +469,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .text-muted { color: var(--text-muted); }
 .mt-0 { margin-top: 0; }
-.flex { display: flex; }
-.gap-8 { gap: 8px; }
 .hidden { display: none !important; }
+/* narrow single-column page (profile) */
+.main-narrow { max-width: 480px; }
 
 /* ==========================================================================
    Responsive breakpoints
