@@ -9,11 +9,15 @@
  */
 
 const PROTECTED_PAGES = ["dashboard.html", "clients.html", "profile.html"];
-const PUBLIC_PAGES = ["index.html", "signup.html", ""];
+const PUBLIC_PAGES = ["index.html", "signup.html"];
 
 function currentPageName() {
-  const path = window.location.pathname.split("/").pop();
-  return path || "index.html";
+  let page = window.location.pathname.split("/").pop() || "index.html";
+  /* some static servers ("clean URLs" mode, e.g. `npx serve`) redirect
+     /profile.html to /profile — normalize back so the page-name lists
+     above match no matter how the site is served */
+  if (!page.includes(".")) page += ".html";
+  return page;
 }
 
 function runAuthGuard() {
