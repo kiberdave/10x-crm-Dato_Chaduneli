@@ -283,7 +283,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .recent-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .recent-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
 .recent-row:last-child { border-bottom: none; }
-.recent-row .name { font-size: 13px; font-weight: 500; margin: 0; }
+.recent-row .name { font-size: 15px; font-weight: 500; margin: 0; }
 .recent-row .company { font-size: 12px; color: var(--text-muted); margin: 1px 0 0; }
 .recent-row .date { font-size: 12px; color: var(--text-muted); margin-left: auto; }
 
@@ -317,7 +317,21 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 .client-card:hover { border-color: var(--border-strong); }
 .client-card .info { flex: 1; min-width: 0; }
-.client-card .cname { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+.client-card .cname { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+/* #detail-name/#profile-name had no explicit font-size before (just
+   inherited the body's 15px) — set explicitly here so "+2px" has a
+   real base to add to, and so it can be targeted below. */
+#detail-name, #profile-name { font-size: 17px; }
+/* client/user names in pure white, but only in dark mode — in light
+   mode the cards are white too, so literal white text would be
+   invisible; the theme-aware --text-primary (used everywhere else)
+   already does the right thing in light mode on its own. */
+[data-theme="dark"] .client-card .cname,
+[data-theme="dark"] .recent-row .name,
+[data-theme="dark"] #detail-name,
+[data-theme="dark"] #profile-name {
+  color: #fff;
+}
 .client-card .cmeta { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .client-card .cvalue { font-size: 12px; font-weight: 600; color: var(--success); margin: 2px 0 0; }
 .client-card select.status-select { width: 130px; height: 32px; font-size: 12px; font-weight: 500; }
