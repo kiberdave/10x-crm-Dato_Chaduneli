@@ -1,100 +1,63 @@
 # AI usage log
 
-This file documents how AI tools were used while building 10X CRM, as
-required by the "AI usage" module.
+How AI was used while building 10X CRM, as required by the "AI usage"
+module. Tool everywhere: Claude (Sonnet / Opus) in VS Code. Every
+session is also journaled in a private worklog; review findings are
+tracked in a private checklist with commit hashes.
 
----
+## Summary
 
-### 1. Scaffolding the project structure
+| # | Phase       | What AI was asked to do                                   | Outcome                          |
+|---|-------------|-----------------------------------------------------------|----------------------------------|
+| 1 | Scaffolding | File layout, CSS tokens, one JS file per concern          | Used as-is                       |
+| 2 | Build       | Sign-up validation with the PRD's exact error strings     | Used with minor edits            |
+| 3 | Build       | Explain DummyJSON 404 on DELETE for locally-added clients | Used to write the try/catch      |
+| 4 | Design      | Dark theme palette                                        | **Rejected**, asked for a redo   |
+| 5 | Review, Jul 19 | Full code review (report only, no changes)             | 5 fixes applied after my approval |
+| 6 | Review, Jul 23 | Pre-exam review + live browser verification            | Real guard bug found; 5 commits  |
+| 7 | Exam prep   | Line-by-line walkthrough of `loadClients()`               | Reworded into my own explanation |
 
-**Goal:** Decide the file layout before writing any code.
+## Highlights
 
-**Prompt (verbatim):** "Design a vanilla JS CRM matching this PRD, adapt
-the earlier dashboard mockup into a working site — file structure, CSS
-tokens, and one JS file per concern (data/guard/auth/dashboard/clients/
-profile)."
+**1. A vague prompt gets vague code.** My first attempt was "Add form
+validation" — it produced generic "required field" messages. The
+refined prompt pasted the exact P1.2 table from the PRD, and only then
+did the literal error strings the exam checks for appear.
+*Lesson: the quality of the prompt decides the quality of the output.*
 
-**Tool:** Claude (Sonnet)
+**2. AI output can be wrong-by-design — the palette I rejected.** The
+first dark-mode palette used pure-black surfaces, which made the
+green/red status badges nearly unreadable. I rejected it and asked for
+a softer near-black scale, closer to real product UIs (GitHub, Linear).
+*Lesson: AI code needs a visual sanity check, not just a functional one.*
 
-**Result:** Used as-is — the suggested split (`data.js` for storage,
-`guard.js` for auth control, one file per page) matched the PRD's
-"shared logic in one place" requirement, so I kept it.
+**3. Review workflow: "report only, change nothing" first.** Before the
+exam I asked for a full review of the codebase with an explicit rule:
+no edits, findings only. Then I approved fixes batch by batch, each
+landing as its own commit. Two real bugs came out of these reviews:
+`escapeHtml` doesn't escape quotes, so an avatar URL containing `"`
+could break out of the `src` attribute (self-XSS) — all rendering was
+switched to DOM nodes (`textContent`/`img.src`), and `escapeHtml` was
+eventually deleted because nothing needed it anymore; and DummyJSON's
+`POST /users/add` always answers with the same `id: 209`, so two added
+clients shared an id and deleting one removed both — the server id is
+now used only when it's actually free.
+*Lesson: keeping "find" and "fix" as separate steps keeps me in
+control of what changes and why.*
 
-**What I learned:** Separating storage helpers from page logic made the
-later CRUD work in `clients.js` much easier to follow.
+**4. The bug that reading code didn't catch.** The auth guard looked
+correct in every code-level review. It failed only when AI actually ran
+the site in a browser: `npx serve` redirects `/profile.html` to
+`/profile` ("clean URLs"), the page name stopped matching the protected
+list, and logged-out visitors walked straight into protected pages. The
+fix normalizes the page name back to `*.html` so the guard works on any
+server.
+*Lesson: run the app, don't just read it — some bugs only exist at
+runtime.*
 
----
-
-### 2. Validation error messages
-
-**Goal:** Match the PRD's exact error text for every form field.
-
-**Prompt (first attempt, too vague):** "Add form validation."
-
-**Prompt (refined):** "Add these six exact validation rules and error
-strings to the sign-up form: [pasted P1.2 table from the PRD]."
-
-**Tool:** Claude (Sonnet)
-
-**Result:** Used with minor edits — I renamed a couple of variables to
-match my own naming convention elsewhere in the file.
-
-**What I learned:** Being vague the first time produced generic
-"required field" messages; pasting the exact table from the PRD was what
-actually got the literal error strings the exam checks for.
-
----
-
-### 3. DummyJSON delete behaviour
-
-**Goal:** Understand why DELETE requests for locally-added clients could
-return 404.
-
-**Prompt:** "Why would DELETE https://dummyjson.com/users/{id} return
-404 for a client I added through POST /users/add?"
-
-**Tool:** Claude (Sonnet)
-
-**Result:** Used the explanation to write the try/catch around the
-delete call — DummyJSON doesn't persist writes, so it can't find an id
-it never actually stored.
-
-**What I learned:** This is expected mock-API behaviour, not a bug in my
-code — the state removal has to happen locally regardless of the
-response.
-
----
-
-### 4. Critical review of generated CSS
-
-**Goal:** Sanity-check AI-suggested theme tokens before adopting them.
-
-**Note:** The first dark-mode palette suggested pure black
-(`#000000`) surfaces, which made the status badges (green/red) nearly
-unreadable against the accent color. I rejected that palette and asked
-for a softer near-black scale instead, closer to what real product UIs
-(GitHub, Linear) use.
-
-**What I learned:** AI output needs a visual sanity check, not just a
-functional one — contrast and readability aren't guaranteed even when
-the code "works".
-
----
-
-### 5. Explaining async/await before the exam
-
-**Goal:** Prepare to explain the `loadClients()` function during the
-oral exam.
-
-**Prompt:** "Explain line by line what this async function does and why
-each part is necessary." *(pasted `loadClients` from `data.js`)*
-
-**Tool:** Claude (Sonnet)
-
-**Result:** Used the explanation to prepare my own spoken walkthrough
-— not copied verbatim, since I need to say it in my own words on exam
-day.
-
-**What I learned:** Being able to explain *why* `try/catch` wraps the
-`fetch` call (and not just that it does) was the part I needed to
-practise most.
+**5. Preparing to defend the code, not just write it.** I asked for a
+line-by-line explanation of the async `loadClients()` flow, then
+rewrote it in my own words for the oral exam. The part I practised
+most was explaining *why* `try/catch` wraps the `fetch` — not just
+that it does.
+*Lesson: if I can't explain a line without AI, it isn't mine yet.*
