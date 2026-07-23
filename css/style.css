@@ -417,6 +417,13 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 [data-theme="dark"] .switch { background: var(--accent); }
 [data-theme="dark"] .switch::after { transform: translateX(16px); }
 
+/* Icon standing in for the "Dark mode" text label on mobile, where
+   there's no room for the label (see .theme-toggle-label below) —
+   without it the bare switch gives no clue what it does. */
+.theme-toggle-icon { display: none; font-size: 15px; line-height: 1; }
+.theme-toggle-icon::before { content: "☀️"; }
+[data-theme="dark"] .theme-toggle-icon::before { content: "🌙"; }
+
 /* ---------- custom scrollbar ----------
    Applied to every scrollable area (.main, .sidebar, modals, notes
    list) so it's a thin, rounded bar that matches the theme instead
@@ -510,7 +517,8 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     order: 2; margin-left: auto; flex-shrink: 0;
     margin-top: 0; flex-direction: row; border-top: none; padding-top: 0;
   }
-  .sidebar .theme-toggle span { display: none; } /* no room for the "Dark mode" label */
+  .theme-toggle-label { display: none; } /* no room for the "Dark mode" label */
+  .theme-toggle-icon { display: inline-block; } /* icon takes its place instead */
 
   .sidebar-menu {
     order: 3;
