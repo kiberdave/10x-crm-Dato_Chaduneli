@@ -332,6 +332,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 [data-theme="dark"] #profile-name {
   color: #fff;
 }
+/* ...and pure black in light mode — no readability risk here (dark
+   text on light cards is the normal case), so no need to gate it
+   the way the white rule above is gated. */
+[data-theme="light"] .client-card .cname,
+[data-theme="light"] .recent-row .name,
+[data-theme="light"] #detail-name,
+[data-theme="light"] #profile-name {
+  color: #000;
+}
 .client-card .cmeta { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .client-card .cvalue { font-size: 12px; font-weight: 600; color: var(--success); margin: 2px 0 0; }
 .client-card select.status-select { width: 130px; height: 32px; font-size: 12px; font-weight: 500; }
