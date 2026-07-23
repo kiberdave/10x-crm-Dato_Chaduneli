@@ -83,6 +83,11 @@ function initLoginForm() {
   const form = document.getElementById("login-form");
   if (!form) return;
 
+  /* same live-clear behaviour as the signup form: the error under a
+     field disappears as soon as the field stops being empty */
+  wireLiveClear(form, "email", (v) => v.trim().length > 0);
+  wireLiveClear(form, "password", (v) => v.length > 0);
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     clearFieldErrors(form);

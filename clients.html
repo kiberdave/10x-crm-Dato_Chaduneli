@@ -48,12 +48,13 @@
 
       <div class="toolbar">
         <input type="text" id="search-input" placeholder="Search by name or company" />
+        <!-- real <button>s, not <span>s: focusable with Tab, Enter/Space work -->
         <div class="chip-group">
-          <span class="chip active" data-status="All">All</span>
-          <span class="chip" data-status="Lead">Lead</span>
-          <span class="chip" data-status="Contacted">Contacted</span>
-          <span class="chip" data-status="Won">Won</span>
-          <span class="chip" data-status="Lost">Lost</span>
+          <button type="button" class="chip active" data-status="All">All</button>
+          <button type="button" class="chip" data-status="Lead">Lead</button>
+          <button type="button" class="chip" data-status="Contacted">Contacted</button>
+          <button type="button" class="chip" data-status="Won">Won</button>
+          <button type="button" class="chip" data-status="Lost">Lost</button>
         </div>
         <select id="sort-select" class="sort-select">
           <option value="newest">Sort: newest first</option>
@@ -102,7 +103,8 @@
         <div class="modal-row-2">
           <div class="field">
             <label for="add-value">Deal value</label>
-            <input type="text" id="add-value" name="dealValue" placeholder="5000" />
+            <!-- inputmode: phones open the numeric keyboard right away -->
+            <input type="text" inputmode="numeric" id="add-value" name="dealValue" placeholder="5000" />
             <div class="field-error" data-error-for="dealValue"></div>
           </div>
           <div class="field">
@@ -131,20 +133,20 @@
       <div class="detail-header">
         <div class="avatar" id="detail-avatar"></div>
         <div>
-          <p style="font-weight:500;margin:0;" id="detail-name"></p>
+          <p id="detail-name"></p>
           <p class="detail-meta" id="detail-meta"></p>
         </div>
       </div>
 
-      <div class="row-actions" style="margin-bottom:14px;">
+      <div class="row-actions">
         <button id="detail-edit-btn" class="btn-sm">Edit</button>
         <button id="detail-delete-btn" class="btn-danger btn-sm">Delete</button>
       </div>
 
-      <table style="width:100%;font-size:13px;margin-bottom:14px;">
-        <tr><td class="text-muted" style="padding:4px 0;">Email</td><td style="text-align:right;" id="detail-email"></td></tr>
-        <tr><td class="text-muted" style="padding:4px 0;">Phone</td><td style="text-align:right;" id="detail-phone"></td></tr>
-        <tr><td class="text-muted" style="padding:4px 0;">Company</td><td style="text-align:right;" id="detail-company"></td></tr>
+      <table class="kv-table">
+        <tr><td class="text-muted">Email</td><td id="detail-email"></td></tr>
+        <tr><td class="text-muted">Phone</td><td id="detail-phone"></td></tr>
+        <tr><td class="text-muted">Company</td><td id="detail-company"></td></tr>
       </table>
 
       <h3>Notes</h3>
