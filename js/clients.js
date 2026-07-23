@@ -7,14 +7,10 @@ let clientsState = [];
 let activeStatusFilter = "All";
 let activeSort = "newest";
 let activeDetailClientId = null;
-/* null = Add Client modal is in "create" mode; a client id = "edit" mode
-   (bonus: Edit reuses the same modal/form, submits PUT instead of POST). */
+/* null = Add Client modal is in "create" mode; a client id = "edit" mode (bonus: Edit reuses the same modal/form, submits PUT instead of POST). */
 let editingClientId = null;
 /* client id -> setTimeout id for a pending "Remind me in 1 min".
-   Without this, clicking Remind twice for the same client stacks up
-   two independent timers (two toasts fire), and deleting a client
-   with a pending reminder still shows a follow-up toast for someone
-   who's no longer in the list. */
+   Without this, clicking Remind twice for the same client stacks up two independent timers (two toasts fire), and deleting a client with a pending reminder still shows a follow-up toast for someone who's no longer in the list. */
 let reminderTimers = {};
 
 /* ---------------- rendering ---------------- */
@@ -23,6 +19,7 @@ function getVisibleClients() {
   const searchInput = document.getElementById("search-input");
   const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
+  // Start with a copy of the full clientsState array, then filter/sort it in place.
   let visible = [...clientsState];
 
   if (activeStatusFilter !== "All") {
@@ -48,10 +45,8 @@ function getVisibleClients() {
   return visible;
 }
 
-/**
- * DOM-building version of the empty state: no HTML string is parsed,
- * so there is nothing to escape.
- */
+// DOM-building version of the empty state: no HTML string so there is nothing to escape.
+
 function createEmptyState(message) {
   const div = document.createElement("div");
   div.className = "empty-state";
@@ -61,8 +56,7 @@ function createEmptyState(message) {
 
 /**
  * Builds one client card as real DOM nodes instead of an HTML string.
- * textContent/src/dataset never get parsed as markup, so this is safe
- * by construction — no escapeHtml() calls needed anywhere in here.
+ * textContent/src/dataset never get parsed as markup, so this is safe by construction — no escapeHtml() calls needed anywhere in here.
  */
 function createClientCard(c) {
   const card = document.createElement("div");
@@ -218,9 +212,12 @@ function wireListDelegation() {
   });
 }
 
+/** Returns true if the client was actually deleted, false if the user
+    cancelled — callers that need to close a modal afterward (like the
+    detail modal) check this instead of always closing regardless. */
 async function handleDeleteClient(id) {
   const confirmed = confirm("Delete this client? This cannot be undone.");
-  if (!confirmed) return;
+  if (!confirmed) return false;
 
   if (reminderTimers[id]) {
     clearTimeout(reminderTimers[id]);
@@ -230,14 +227,14 @@ async function handleDeleteClient(id) {
   try {
     await fetch(`https://dummyjson.com/users/${id}`, { method: "DELETE" });
   } catch (e) {
-    /* DummyJSON may fail or 404 for client-generated ids — we still remove
-       the client locally, since this is the expected mock-API behaviour. */
+    /* DummyJSON may fail or 404 for client-generated ids — we still remove the client locally, since this is the expected mock-API behaviour. */
   }
 
   clientsState = clientsState.filter((c) => c.id !== id);
   saveClients(clientsState);
   renderClients();
   showToast("Client deleted", "success");
+  return true;
 }
 
 /* ---------------- add client modal ---------------- */
@@ -419,12 +416,27 @@ function wireDetailModal() {
   const closeBtn = document.getElementById("detail-modal-close");
   const addNoteBtn = document.getElementById("add-note-btn");
   const remindBtn = document.getElementById("remind-btn");
+  const editBtn = document.getElementById("detail-edit-btn");
+  const deleteBtn = document.getElementById("detail-delete-btn");
   if (!overlay) return;
 
   const close = () => overlay.classList.add("hidden");
   closeBtn.addEventListener("click", close);
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) close();
+  });
+
+  /* Reuse the exact same functions the list's Edit/Delete buttons call
+     — no separate logic for the modal. */
+  editBtn.addEventListener("click", () => {
+    const id = activeDetailClientId;
+    close();
+    openEditModal(id);
+  });
+
+  deleteBtn.addEventListener("click", async () => {
+    const deleted = await handleDeleteClient(activeDetailClientId);
+    if (deleted) close();
   });
 
   addNoteBtn.addEventListener("click", () => {
