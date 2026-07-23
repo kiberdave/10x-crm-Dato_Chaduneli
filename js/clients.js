@@ -45,18 +45,9 @@ function getVisibleClients() {
   return visible;
 }
 
-// DOM-building version of the empty state: no HTML string so there is nothing to escape.
-
-function createEmptyState(message) {
-  const div = document.createElement("div");
-  div.className = "empty-state";
-  div.textContent = message;
-  return div;
-}
-
 /**
  * Builds one client card as real DOM nodes instead of an HTML string.
- * textContent/src/dataset never get parsed as markup, so this is safe by construction — no escapeHtml() calls needed anywhere in here.
+ * textContent/src/dataset never get parsed as markup, so this is safe by construction — no HTML escaping needed anywhere in here.
  */
 function createClientCard(c) {
   const card = document.createElement("div");
@@ -140,7 +131,7 @@ async function initClientsPage() {
   if (error) {
     container.innerHTML = `
       <div class="error-state">
-        <p style="margin:0;">Could not load clients. Check your connection and try again.</p>
+        <p>Could not load clients. Check your connection and try again.</p>
         <button id="retry-load-btn">Retry</button>
       </div>`;
     document.getElementById("retry-load-btn").addEventListener("click", initClientsPage);
@@ -266,6 +257,9 @@ function wireAddModal() {
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) close();
   });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !overlay.classList.contains("hidden")) close();
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -308,7 +302,7 @@ function wireAddModal() {
     if (avatarUrl) {
       try {
         new URL(avatarUrl);
-      } catch (e) {
+      } catch (err) {
         setFieldError(form, "avatarUrl", "Avatar URL doesn't look valid");
         hasError = true;
       }
@@ -352,6 +346,7 @@ function wireAddModal() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName: name.split(" ")[0], lastName: name.split(" ").slice(1).join(" ") || "" }),
       });
+      if (!res.ok) throw new Error("Network response was not ok");
       apiClient = await res.json();
     } catch (err) {
       /* Network failure: still add locally so the flow keeps working offline. */
@@ -425,6 +420,9 @@ function wireDetailModal() {
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) close();
   });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !overlay.classList.contains("hidden")) close();
+  });
 
   /* Reuse the exact same functions the list's Edit/Delete buttons call
      — no separate logic for the modal. */
@@ -447,10 +445,16 @@ function wireDetailModal() {
     const client = clientsState.find((c) => c.id === activeDetailClientId);
     if (!client) return;
 
-    client.notes.push({ text, date: new Date().toLocaleString() });
+    client.notes.push({ text, date: new Date().toLocaleString("en-US") });
     saveClients(clientsState);
     input.value = "";
     renderNotesList(client);
+  });
+
+  /* Enter in the note field = click "Add note" — the input isn't inside
+     a <form>, so the browser doesn't do this for free. */
+  document.getElementById("note-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") addNoteBtn.click();
   });
 
   remindBtn.addEventListener("click", () => {
@@ -463,25 +467,41 @@ function wireDetailModal() {
 
     showToast("Reminder set ✓", "success");
     reminderTimers[client.id] = setTimeout(() => {
-      showToast(`⏰ Follow up: ${client.name}`, "success");
+      /* look the client up again at fire time — they may have been
+         renamed during the minute the timer was pending */
+      const current = clientsState.find((c) => c.id === client.id);
+      if (current) showToast(`⏰ Follow up: ${current.name}`, "success");
       delete reminderTimers[client.id];
     }, 60000);
   });
 }
 
+/* DOM nodes instead of an HTML string, same as createClientCard —
+   textContent never gets parsed as markup, so nothing needs escaping. */
 function renderNotesList(client) {
   const list = document.getElementById("notes-list");
+  list.replaceChildren();
+
   if (!client.notes || client.notes.length === 0) {
-    list.innerHTML = `<div class="note-empty">No notes yet.</div>`;
+    const empty = document.createElement("div");
+    empty.className = "note-empty";
+    empty.textContent = "No notes yet.";
+    list.appendChild(empty);
     return;
   }
-  list.innerHTML = client.notes
-    .map(
-      (n) => `<div class="note-item">${escapeHtml(n.text)}<span class="note-date">${escapeHtml(
-        n.date
-      )}</span></div>`
-    )
-    .join("");
+
+  client.notes.forEach((n) => {
+    const item = document.createElement("div");
+    item.className = "note-item";
+    item.textContent = n.text;
+
+    const date = document.createElement("span");
+    date.className = "note-date";
+    date.textContent = n.date;
+
+    item.appendChild(date);
+    list.appendChild(item);
+  });
 }
 
 function openDetailModal(id) {

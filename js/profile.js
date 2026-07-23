@@ -47,7 +47,7 @@ function initEditProfileForm() {
     if (avatarUrl) {
       try {
         new URL(avatarUrl);
-      } catch (e) {
+      } catch (err) {
         setFieldError(form, "avatarUrl", "Avatar URL doesn't look valid");
         hasError = true;
       }

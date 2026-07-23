@@ -136,6 +136,8 @@ function ensureToastContainer() {
   if (!container) {
     container = document.createElement("div");
     container.className = "toast-container";
+    /* screen readers announce new toasts without stealing focus */
+    container.setAttribute("aria-live", "polite");
     document.body.appendChild(container);
   }
   return container;
@@ -186,12 +188,10 @@ function formatCurrency(value) {
   return "$" + Number(value || 0).toLocaleString("en-US");
 }
 
+/* "en-US" (not the browser's default locale): the UI copy is English,
+   so dates should render in English on any machine too. */
 function formatDate(isoString) {
-  return new Date(isoString).toLocaleDateString();
-}
-
-function formatDateTime(isoString) {
-  return new Date(isoString).toLocaleString();
+  return new Date(isoString).toLocaleDateString("en-US");
 }
 
 function initials(fullName) {
@@ -204,19 +204,21 @@ function initials(fullName) {
     .join("");
 }
 
-function escapeHtml(str) {
+/** Shared "No clients found." / "No notes yet." style empty box,
+    built as a DOM node so there is no HTML string to escape. */
+function createEmptyState(message) {
   const div = document.createElement("div");
-  div.textContent = String(str);
-  return div.innerHTML;
+  div.className = "empty-state";
+  div.textContent = message;
+  return div;
 }
 
 /**
  * Fills an .avatar element with the client's photo or their initials.
  * Built with DOM nodes (not an HTML string) on purpose: img.src treats
  * the URL as plain data, so a quote inside it can never break out of
- * the attribute — escapeHtml() escapes <>& but not quotes, which makes
- * it unsafe for attribute values. Shared by the clients list, the
- * detail modal and the dashboard's recent list.
+ * an attribute the way it could in an innerHTML string. Shared by the
+ * clients list, the detail modal and the dashboard's recent list.
  */
 function fillAvatar(el, client) {
   el.replaceChildren();

@@ -16,12 +16,14 @@ function startClock() {
   if (!el) return;
   const tick = () => {
     const now = new Date();
-    el.textContent = `${now.toLocaleDateString(undefined, {
+    /* "en-US" (not the browser's default locale): the UI copy is
+       English, so the clock should be English on any machine too */
+    el.textContent = `${now.toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
-    })} · ${now.toLocaleTimeString()}`;
+    })} · ${now.toLocaleTimeString("en-US")}`;
   };
   tick();
   setInterval(tick, 1000);
@@ -109,7 +111,7 @@ function renderRecentClients(clients) {
     .slice(0, 5);
 
   if (recent.length === 0) {
-    container.innerHTML = `<div class="empty-state">No clients found.</div>`;
+    container.replaceChildren(createEmptyState("No clients found."));
     return;
   }
 
