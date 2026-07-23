@@ -63,6 +63,7 @@ function initSignupForm() {
       email,
       password,
       company,
+      image: "",
       createdAt: new Date().toISOString(),
     };
     users.push(newUser);

@@ -7,7 +7,10 @@ function renderProfileInfo() {
   const user = getCurrentUser();
   if (!user) return;
 
-  document.getElementById("profile-avatar").textContent = initials(user.fullName);
+  /* fillAvatar expects { image, name } — reshape the user record to
+     that shape rather than changing fillAvatar itself, since it's
+     shared with the client cards/detail modal/dashboard too. */
+  fillAvatar(document.getElementById("profile-avatar"), { image: user.image, name: user.fullName });
   document.getElementById("profile-name").textContent = user.fullName;
   document.getElementById("profile-email").textContent = user.email;
   document.getElementById("profile-company").textContent = user.company || "—";
@@ -19,6 +22,7 @@ function renderProfileInfo() {
   if (form) {
     form.fullName.value = user.fullName;
     form.company.value = user.company || "";
+    form.avatarUrl.value = user.image || "";
   }
 }
 
@@ -32,11 +36,24 @@ function initEditProfileForm() {
 
     const fullName = form.fullName.value.trim();
     const company = form.company.value.trim();
+    const avatarUrl = form.avatarUrl.value.trim();
+
+    let hasError = false;
 
     if (fullName.length < 3) {
       setFieldError(form, "fullName", "Full name must be at least 3 characters");
-      return;
+      hasError = true;
     }
+    if (avatarUrl) {
+      try {
+        new URL(avatarUrl);
+      } catch (e) {
+        setFieldError(form, "avatarUrl", "Avatar URL doesn't look valid");
+        hasError = true;
+      }
+    }
+
+    if (hasError) return;
 
     const session = getSession();
     const users = getUsers();
@@ -45,6 +62,7 @@ function initEditProfileForm() {
 
     user.fullName = fullName;
     user.company = company;
+    user.image = avatarUrl;
     saveUsers(users);
 
     showToast("Profile updated ✓", "success");
