@@ -10,7 +10,10 @@ let activeDetailClientId = null;
 /* null = Add Client modal is in "create" mode; a client id = "edit" mode (bonus: Edit reuses the same modal/form, submits PUT instead of POST). */
 let editingClientId = null;
 /* client id -> setTimeout id for a pending "Remind me in 1 min".
-   Without this, clicking Remind twice for the same client stacks up two independent timers (two toasts fire), and deleting a client with a pending reminder still shows a follow-up toast for someone who's no longer in the list. */
+   Lets us show "Reminder set" on the button while a timer is pending
+   (which also blocks stacking a second timer for the same client), and
+   cancel the timer when a client with a pending reminder is deleted —
+   otherwise a follow-up toast would fire for someone no longer in the list. */
 let reminderTimers = {};
 
 /* ---------------- rendering ---------------- */
@@ -461,10 +464,6 @@ function wireDetailModal() {
     const client = clientsState.find((c) => c.id === activeDetailClientId);
     if (!client) return;
 
-    if (reminderTimers[client.id]) {
-      clearTimeout(reminderTimers[client.id]);
-    }
-
     showToast("Reminder set ✓", "success");
     reminderTimers[client.id] = setTimeout(() => {
       /* look the client up again at fire time — they may have been
@@ -472,8 +471,22 @@ function wireDetailModal() {
       const current = clientsState.find((c) => c.id === client.id);
       if (current) showToast(`⏰ Follow up: ${current.name}`, "success");
       delete reminderTimers[client.id];
+      updateRemindButton();
     }, 60000);
+    updateRemindButton();
   });
+}
+
+/** Makes the Remind button reflect whether the open client already has
+    a pending reminder: disabled + "Reminder set" while one is waiting.
+    Disabling also means a second timer can't be stacked for the same
+    client. Called when the modal opens, on click, and when the timer
+    fires. */
+function updateRemindButton() {
+  const btn = document.getElementById("remind-btn");
+  const pending = Boolean(reminderTimers[activeDetailClientId]);
+  btn.disabled = pending;
+  btn.textContent = pending ? "Reminder set ✓" : "Remind me in 1 min";
 }
 
 /* DOM nodes instead of an HTML string, same as createClientCard —
@@ -519,6 +532,7 @@ function openDetailModal(id) {
   document.getElementById("detail-company").textContent = client.company || "—";
 
   renderNotesList(client);
+  updateRemindButton();
   document.getElementById("note-input").value = "";
   document.getElementById("detail-modal").classList.remove("hidden");
 }
