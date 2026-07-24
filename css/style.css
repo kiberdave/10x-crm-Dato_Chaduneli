@@ -483,7 +483,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .mt-0 { margin-top: 0; }
 .hidden { display: none !important; }
 /* narrow single-column page (profile) */
-.main-narrow { max-width: 480px; }
+.main-narrow { max-width: 600px; }
 
 /* ==========================================================================
    Responsive breakpoints
