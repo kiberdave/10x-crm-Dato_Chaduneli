@@ -63,48 +63,50 @@
         </table>
       </div>
 
-      <div class="card">
-        <h3>Edit profile</h3>
-        <form id="edit-profile-form" novalidate>
-          <div class="field">
-            <label for="edit-fullname">Full name</label>
-            <input type="text" id="edit-fullname" name="fullName" />
-            <div class="field-error" data-error-for="fullName"></div>
-          </div>
-          <div class="field">
-            <label for="edit-company">Company</label>
-            <input type="text" id="edit-company" name="company" />
-            <div class="field-error" data-error-for="company"></div>
-          </div>
-          <div class="field">
-            <label for="edit-avatar-url">Avatar URL (optional)</label>
-            <input type="text" id="edit-avatar-url" name="avatarUrl" placeholder="https://example.com/photo.jpg" />
-            <div class="field-error" data-error-for="avatarUrl"></div>
-          </div>
-          <button type="submit" class="btn-primary">Save changes</button>
-        </form>
-      </div>
+      <div class="card-row">
+        <div class="card">
+          <h3>Edit profile</h3>
+          <form id="edit-profile-form" novalidate>
+            <div class="field">
+              <label for="edit-fullname">Full name</label>
+              <input type="text" id="edit-fullname" name="fullName" />
+              <div class="field-error" data-error-for="fullName"></div>
+            </div>
+            <div class="field">
+              <label for="edit-company">Company</label>
+              <input type="text" id="edit-company" name="company" />
+              <div class="field-error" data-error-for="company"></div>
+            </div>
+            <div class="field">
+              <label for="edit-avatar-url">Avatar URL (optional)</label>
+              <input type="text" id="edit-avatar-url" name="avatarUrl" placeholder="https://example.com/photo.jpg" />
+              <div class="field-error" data-error-for="avatarUrl"></div>
+            </div>
+            <button type="submit" class="btn-primary">Save changes</button>
+          </form>
+        </div>
 
-      <div class="card">
-        <h3>Change password</h3>
-        <form id="change-password-form" novalidate>
-          <div class="field">
-            <label for="current-password">Current password</label>
-            <input type="password" id="current-password" name="currentPassword" />
-            <div class="field-error" data-error-for="currentPassword"></div>
-          </div>
-          <div class="field">
-            <label for="new-password">New password</label>
-            <input type="password" id="new-password" name="newPassword" />
-            <div class="field-error" data-error-for="newPassword"></div>
-          </div>
-          <div class="field">
-            <label for="confirm-new-password">Confirm new password</label>
-            <input type="password" id="confirm-new-password" name="confirmNewPassword" />
-            <div class="field-error" data-error-for="confirmNewPassword"></div>
-          </div>
-          <button type="submit" class="btn-primary">Change password</button>
-        </form>
+        <div class="card">
+          <h3>Change password</h3>
+          <form id="change-password-form" novalidate>
+            <div class="field">
+              <label for="current-password">Current password</label>
+              <input type="password" id="current-password" name="currentPassword" />
+              <div class="field-error" data-error-for="currentPassword"></div>
+            </div>
+            <div class="field">
+              <label for="new-password">New password</label>
+              <input type="password" id="new-password" name="newPassword" />
+              <div class="field-error" data-error-for="newPassword"></div>
+            </div>
+            <div class="field">
+              <label for="confirm-new-password">Confirm new password</label>
+              <input type="password" id="confirm-new-password" name="confirmNewPassword" />
+              <div class="field-error" data-error-for="confirmNewPassword"></div>
+            </div>
+            <button type="submit" class="btn-primary">Change password</button>
+          </form>
+        </div>
       </div>
 
       <div class="card">

@@ -251,6 +251,18 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
    another .card, so the first one in a stack is naturally skipped */
 .card + .card { margin-top: 20px; }
 
+/* Edit profile + Change password side by side instead of stacked, so
+   they don't push "Data" further down the page than it needs to be.
+   .card-row is a plain <div>, not a .card, so it falls outside the
+   ".card + .card" rule above — spaced against its neighbors here
+   instead, same 20px rhythm as the rest of the stack. Inside the row,
+   the two .card children ARE adjacent .card siblings, so that same
+   rule would otherwise also push the second one down; cancelled back
+   to 0 so the grid's own `gap` is the only spacing between them. */
+.card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.card-row > .card + .card { margin-top: 0; }
+.card + .card-row, .card-row + .card { margin-top: 20px; }
+
 .stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 22px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
 .stat-label { font-size: 13px; color: var(--text-secondary); margin: 0 0 6px; }
@@ -557,6 +569,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   .modal { padding: 18px; }
   .modal-overlay { padding: 12px; }
   .modal-row-2 { grid-template-columns: 1fr; }
+  /* the grid's own `gap: 20px` already spaces stacked items vertically
+     once there's a single column, so no extra rule is needed here */
+  .card-row { grid-template-columns: 1fr; }
 
   /* least important column — drop it rather than truncate the name */
   .recent-row .date { display: none; }
