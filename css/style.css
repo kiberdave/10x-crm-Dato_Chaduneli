@@ -457,7 +457,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
    it yet — both are included so every browser gets a styled bar. */
 .main, .sidebar, .modal, .notes-list {
   scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-color: var(--accent) transparent;
 }
 .main::-webkit-scrollbar, .sidebar::-webkit-scrollbar,
 .modal::-webkit-scrollbar, .notes-list::-webkit-scrollbar {
@@ -467,14 +467,18 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .modal::-webkit-scrollbar-track, .notes-list::-webkit-scrollbar-track {
   background: transparent;
 }
+/* Same color as the logo mark (--accent) — the previous
+   --border-strong thumb was too close to --bg's contrast to actually
+   see or grab with the mouse, so click-drag scrolling only "worked"
+   in the sense that the wheel still scrolled the (invisible) area. */
 .main::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb,
 .modal::-webkit-scrollbar-thumb, .notes-list::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--accent);
   border-radius: 20px;
 }
 .main::-webkit-scrollbar-thumb:hover, .sidebar::-webkit-scrollbar-thumb:hover,
 .modal::-webkit-scrollbar-thumb:hover, .notes-list::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: var(--accent-hover);
 }
 
 /* ---------- utility ---------- */
