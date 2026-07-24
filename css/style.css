@@ -272,6 +272,13 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .pipeline-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
 .pipeline-card .p-label { font-size: 12px; color: var(--text-secondary); margin: 0; }
 .pipeline-card .p-value { font-size: 20px; font-weight: 600; margin: 4px 0 0; }
+/* same colors as the matching client status badge (.badge-lead etc.
+   in js/dashboard.js's STATUS_BADGE map) so a status reads the same
+   whether it's on a client card or summed up here */
+.pipeline-card.p-lead { background: var(--neutral-bg); }
+.pipeline-card.p-lead .p-label, .pipeline-card.p-lead .p-value { color: var(--text-secondary); }
+.pipeline-card.p-contacted { background: var(--accent-bg); }
+.pipeline-card.p-contacted .p-label, .pipeline-card.p-contacted .p-value { color: var(--accent); }
 .pipeline-card.p-won { background: var(--success-bg); }
 .pipeline-card.p-won .p-label, .pipeline-card.p-won .p-value { color: var(--success); }
 .pipeline-card.p-lost { background: var(--danger-bg); }
