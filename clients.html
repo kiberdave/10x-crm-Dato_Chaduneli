@@ -4,14 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clients — 10X CRM</title>
-  <!-- Runs before CSS/body render, so data-theme is already set on the
-       first frame — otherwise the page briefly paints the default
-       (light) theme before data.js/guard.js get a chance to run.
+  <!-- Runs before CSS/body render, so data-theme is set and a missing
+       session is caught before the first frame — otherwise the page
+       briefly paints the default theme, and this protected page's
+       content, before data.js/guard.js get a chance to run and redirect.
        Self-contained on purpose: data.js hasn't loaded yet here, so
-       the "crm_theme" key is written out directly instead of using
-       data.js's STORAGE_KEYS.THEME. -->
+       the "crm_theme"/"crm_session" keys are read directly instead of
+       using data.js's STORAGE_KEYS/getSession(). -->
   <script>
     document.documentElement.setAttribute("data-theme", localStorage.getItem("crm_theme") || "light");
+    if (!localStorage.getItem("crm_session")) {
+      window.location.href = "index.html";
+    }
   </script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
