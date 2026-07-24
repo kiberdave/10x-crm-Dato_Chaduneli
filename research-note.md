@@ -5,25 +5,27 @@
 
 **Keywords used to find it:** `fetch api error handling response.ok`
 
-**Summary (in Georgian):**
+**Summary:**
 
-MDN-ის დოკუმენტაცია განმარტავს, რომ `fetch()` ფუნქცია მხოლოდ ქსელური
-შეცდომის დროს (მაგ. კავშირის გაწყვეტა ან DNS-ის ჩავარდნა) აგდებს
-exception-ს try/catch ბლოკში — HTTP სტატუსის შეცდომებზე (404, 500) ის
-ავტომატურად არ "იჭერს" შეცდომას, რადგან სერვერის პასუხი, თუნდაც
-შეცდომის კოდით, მაინც ითვლება "წარმატებულ" ქსელურ მოთხოვნად. ამიტომ
-საჭიროა ხელით შემოწმდეს `response.ok` თვისება, რომელიც `true`-ს
-აბრუნებს მხოლოდ 200-299 დიაპაზონის სტატუსებზე. დოკუმენტაცია ასევე
-აჩვენებს, რომ `fetch()` თავად Promise-ს აბრუნებს, რომელიც `Response`
-ობიექტზე გარდაიქმნება — ამიტომ `data.js`-ში `loadClients()` async
-ფუნქციადაა დაწერილი და `await fetch(...)`-ს იყენებს, რომ კოდი
-თანმიმდევრულად, callback-ების გარეშე იკითხებოდეს. მნიშვნელოვანია
-ისიც, რომ `response.json()` თავადაც ცალკე Promise-ია და ბოდის
-დამუშავებას დრო სჭირდება, ამიტომ ისიც ცალკე `await`-ით ველოდები,
-სანამ `data.users` მასივს გამოვიყენებ. სწორედ ამიტომ, clients
-გვერდზე მონაცემების ჩატვირთვისას ვამოწმებ ორივეს ერთად:
-`try/catch`-ს ქსელური პრობლემებისთვის და `response.ok`-ს იმისთვის,
-რომ სერვერმა თავად დააბრუნა შეცდომის სტატუსი. ეს პირდაპირ
-უკავშირდება P4.2-ში აღწერილ error handling-ის მოთხოვნას — Retry
-ღილაკთან ერთად, რომელიც `initClientsPage()`-ს ხელახლა იძახებს, ის კი
-თავის მხრივ იმავე `loadClients()` ფუნქციას თავიდან უშვებს.
+The MDN documentation explains that `fetch()` only throws an exception
+into a `try/catch` block on a *network* error (e.g. a dropped connection
+or a DNS failure). It does **not** automatically treat HTTP status
+errors (404, 500) as failures, because a server response — even one
+carrying an error code — still counts as a *successful* network
+request. That is why you have to check the `response.ok` property by
+hand: it returns `true` only for statuses in the 200–299 range.
+
+The docs also show that `fetch()` itself returns a Promise that
+resolves to a `Response` object — which is exactly why `loadClients()`
+in `data.js` is written as an `async` function using `await fetch(...)`,
+so the code reads sequentially, without callbacks. It matters too that
+`response.json()` is *itself* a separate Promise and takes time to parse
+the body, so I `await` that separately as well before using the
+`data.users` array.
+
+For this reason, when the clients page loads its data I check both
+things together: `try/catch` for network problems, and `response.ok`
+for the case where the server itself returned an error status. This
+maps directly to the error-handling requirement described in P4.2 —
+together with the Retry button, which re-invokes `initClientsPage()`,
+and that in turn runs the same `loadClients()` function again.
